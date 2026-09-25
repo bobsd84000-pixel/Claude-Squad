@@ -33,17 +33,46 @@ export class Orchestrator {
 
     if (this.config.orchestration.mode === 'sequential') {
       for (const agent of matchingAgents) {
-        const result = await this.executeOnAgent(agent, task);
+        const result = await this.executeWithRetry(agent, task);
         results.push(result);
         if (result.status === 'error') break;
       }
     } else {
-      const promises = matchingAgents.map(a => this.executeOnAgent(a, task));
+      const promises = matchingAgents.map(a => this.executeWithRetry(a, task));
       results.push(...await Promise.all(promises));
     }
 
     this.results.push(...results);
     return results;
+  }
+
+  private async executeWithRetry(agent: Agent, task: Task): Promise<TaskResult> {
+    const maxRetries = this.config.orchestration.retries;
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await this.executeOnAgent(agent, task);
+        if (result.status === 'success') return result;
+        lastError = new Error(String((result.output as any)?.error || 'unknown error'));
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        if (attempt < maxRetries) {
+          const delayMs = Math.pow(2, attempt) * 1000;
+          this.log(`[RETRY] ${agent.id}: attempt ${attempt + 1}/${maxRetries + 1}, retrying in ${delayMs}ms`);
+          await this.sleep(delayMs);
+        }
+      }
+    }
+
+    return {
+      taskId: task.id,
+      agentId: agent.id,
+      status: 'error',
+      output: { error: lastError?.message || 'max retries exceeded' },
+      timestamp: Date.now(),
+      duration: 0,
+    };
   }
 
   private async executeOnAgent(agent: Agent, task: Task): Promise<TaskResult> {
