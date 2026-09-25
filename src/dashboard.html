@@ -326,13 +326,90 @@
     </div>
 
     <div class="cta-section">
-      <button class="btn btn-primary">📊 Monitoring</button>
-      <button class="btn btn-secondary">📚 Documentation</button>
+      <button class="btn btn-primary" id="monitoringBtn">📊 Monitoring</button>
+      <button class="btn btn-secondary" id="docsBtn">📚 Documentation</button>
+    </div>
+
+    <div id="monitoring-panel" style="display: none; margin-top: 60px;">
+      <div class="agents-section">
+        <h2>📡 Événements du Bus</h2>
+        <div id="events-list" style="max-height: 400px; overflow-y: auto; background: rgba(15, 23, 42, 0.8); border-radius: 8px; padding: 16px;">
+          <p style="color: #64748b; text-align: center;">En attente d'événements...</p>
+        </div>
+      </div>
     </div>
 
     <footer>
       <p>Claude Squad v1.0.0 • Orchestrateur multi-agents pour Node.js</p>
     </footer>
   </div>
+
+  <script>
+    const monitoringBtn = document.getElementById('monitoringBtn');
+    const docsBtn = document.getElementById('docsBtn');
+    const monitoringPanel = document.getElementById('monitoring-panel');
+    const eventsList = document.getElementById('events-list');
+    let polling = false;
+
+    monitoringBtn.addEventListener('click', () => {
+      monitoringPanel.style.display = monitoringPanel.style.display === 'none' ? 'block' : 'none';
+      if (monitoringPanel.style.display === 'block' && !polling) {
+        polling = true;
+        monitoringBtn.textContent = '⏸️ Pause Monitoring';
+        fetchEvents();
+      } else {
+        polling = false;
+        monitoringBtn.textContent = '📊 Monitoring';
+      }
+    });
+
+    docsBtn.addEventListener('click', () => {
+      window.open('https://github.com/bobsd84000-pixel/Claude-Squad', '_blank');
+    });
+
+    async function fetchEvents() {
+      try {
+        const response = await fetch('/api/events');
+        const data = await response.json();
+
+        if (data.events && data.events.length > 0) {
+          const html = data.events
+            .reverse()
+            .slice(0, 50)
+            .map(event => `
+              <div style="padding: 12px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); font-size: 0.875rem;">
+                <div style="color: #60a5fa; font-weight: 600;">${event.type}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem;">
+                  ${event.agentId} • ${new Date(event.timestamp).toLocaleTimeString()}
+                </div>
+                <div style="color: #cbd5e1; margin-top: 4px; font-family: monospace; font-size: 0.75rem;">
+                  ${JSON.stringify(event.data).substring(0, 150)}...
+                </div>
+              </div>
+            `)
+            .join('');
+          eventsList.innerHTML = html;
+        }
+      } catch (err) {
+        eventsList.innerHTML = '<p style="color: #ef4444; text-align: center;">Erreur de connexion à l\'API</p>';
+      }
+
+      if (polling) {
+        setTimeout(fetchEvents, 2000);
+      }
+    }
+
+    // Mise à jour des stats en temps réel
+    const statCards = document.querySelectorAll('.stat-card .value');
+    if (statCards.length > 0) {
+      setInterval(async () => {
+        try {
+          const response = await fetch('/api/events');
+          const data = await response.json();
+          statCards[3].textContent = data.total || '0';
+        } catch (err) {}
+      }, 5000);
+    }
+  </script>
 </body>
 </html>
