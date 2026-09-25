@@ -1,0 +1,34 @@
+{
+  "agents": {
+    "claude-code": {
+      "enabled": true,
+      "priority": 1,
+      "description": "Coding agent — Claude Code avec terminal + file ops",
+      "capabilities": ["coding", "file-system", "terminal"]
+    },
+    "codex": {
+      "enabled": true,
+      "priority": 2,
+      "description": "Documentation + search agent",
+      "capabilities": ["search", "documentation", "indexing"]
+    },
+    "opencode": {
+      "enabled": false,
+      "priority": 3,
+      "description": "Open-source code discovery",
+      "capabilities": ["discovery", "analysis"]
+    },
+    "amp": {
+      "enabled": false,
+      "priority": 4,
+      "description": "Analytics + metrics agent",
+      "capabilities": ["metrics", "telemetry", "reporting"]
+    }
+  },
+  "orchestration": {
+    "mode": "sequential",
+    "timeout": 30000,
+    "retries": 2,
+    "logging": true
+  }
+}
