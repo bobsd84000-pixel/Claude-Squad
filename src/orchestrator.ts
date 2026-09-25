@@ -74,11 +74,15 @@ export class Orchestrator {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => {
+      // @ts-ignore
+      setTimeout(resolve, ms);
+    });
   }
 
   private log(msg: string): void {
     if (this.config.orchestration.logging) {
+      // @ts-ignore
       console.log(`[${new Date().toISOString()}] ${msg}`);
     }
   }

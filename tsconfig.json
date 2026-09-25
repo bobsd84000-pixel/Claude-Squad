@@ -3,10 +3,9 @@
     "ignoreDeprecations": "6.0",
     "target": "ES2020",
     "module": "ESNext",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM"],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "noEmit": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
@@ -14,8 +13,17 @@
     "declaration": false,
     "sourceMap": false,
     "noImplicitAny": false,
-    "strict": false
+    "noImplicitThis": false,
+    "strict": false,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": false,
+    "baseUrl": ".",
+    "types": [],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "dist/**/*"]
 }

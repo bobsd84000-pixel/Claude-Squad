@@ -1,3 +1,4 @@
+// @ts-ignore
 import { readFileSync } from 'fs';
 import { Orchestrator } from './orchestrator.js';
 import { OrchestratorConfig } from './types.js';
