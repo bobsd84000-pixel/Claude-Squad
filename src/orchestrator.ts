@@ -1,4 +1,5 @@
 import { Task, TaskResult, Agent, OrchestratorConfig } from './types.js';
+import { getRunner } from './agents/index.js';
 
 export class Orchestrator {
   private config: OrchestratorConfig;
@@ -50,14 +51,20 @@ export class Orchestrator {
     try {
       this.log(`[EXEC] ${agent.id}: ${task.name}`);
       
-      // Simulé — remplacer par logique agent réelle
-      await this.sleep(100);
+      const runner = getRunner(agent.id);
+      let output: unknown;
+      if (runner) {
+        output = await runner.run(task, this.config.orchestration.timeout);
+      } else {
+        await this.sleep(100);
+        output = { processed: true, agent: agent.id };
+      }
 
       return {
         taskId: task.id,
         agentId: agent.id,
         status: 'success',
-        output: { processed: true, agent: agent.id },
+        output,
         timestamp: startTime,
         duration: Date.now() - startTime,
       };
