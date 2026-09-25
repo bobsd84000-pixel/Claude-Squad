@@ -1,6 +1,6 @@
 export interface Agent {
   id: string;
-  name: string;
+  name?: string;
   enabled: boolean;
   priority: number;
   capabilities: string[];

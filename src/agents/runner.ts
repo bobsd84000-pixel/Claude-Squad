@@ -11,21 +11,31 @@ export function runCommand(cmd: string, args: string[], timeoutMs: number): Prom
     const child = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '';
     let stderr = '';
+    let done = false;
     const timer = setTimeout(() => {
-      child.kill('SIGTERM');
-      reject(new Error(`${cmd}: timeout après ${timeoutMs}ms`));
+      if (!done) {
+        done = true;
+        child.kill('SIGTERM');
+        reject(new Error(`${cmd}: timeout après ${timeoutMs}ms`));
+      }
     }, timeoutMs);
 
     child.stdout.on('data', chunk => (stdout += chunk));
     child.stderr.on('data', chunk => (stderr += chunk));
     child.on('error', err => {
-      clearTimeout(timer);
-      reject(new Error(`${cmd}: ${err.message}`));
+      if (!done) {
+        done = true;
+        clearTimeout(timer);
+        reject(new Error(`${cmd}: ${err.message}`));
+      }
     });
     child.on('close', code => {
-      clearTimeout(timer);
-      if (code === 0) resolve(stdout.trim());
-      else reject(new Error(`${cmd} (code ${code}): ${stderr.trim() || stdout.trim()}`));
+      if (!done) {
+        done = true;
+        clearTimeout(timer);
+        if (code === 0) resolve(stdout.trim());
+        else reject(new Error(`${cmd} (code ${code}): ${stderr.trim() || stdout.trim()}`));
+      }
     });
   });
 }

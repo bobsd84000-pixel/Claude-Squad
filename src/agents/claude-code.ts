@@ -5,7 +5,13 @@ export const claudeCode: AgentRunner = {
   id: 'claude-code',
   async run(task: Task, timeoutMs: number, context?: AgentContext) {
     const out = await runCommand('claude', ['-p', buildPrompt(task), '--output-format', 'json'], timeoutMs);
-    const parsed = JSON.parse(out);
+    let parsed;
+    try {
+      parsed = JSON.parse(out);
+    } catch (err) {
+      throw new Error(`claude-code: invalid JSON - ${String(err)}`);
+    }
+    if (!parsed || typeof parsed !== 'object') throw new Error('claude-code: invalid response format');
     if (parsed.is_error) throw new Error(`claude-code: ${parsed.result}`);
 
     const result = { result: parsed.result, costUsd: parsed.total_cost_usd, sessionId: parsed.session_id };

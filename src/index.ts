@@ -4,8 +4,9 @@ import { Dashboard } from './dashboard.js';
 import { OrchestratorConfig } from './types.js';
 
 async function main() {
-  const configRaw = readFileSync('./agents.config.json', 'utf8');
-  const config: OrchestratorConfig = JSON.parse(configRaw);
+  try {
+    const configRaw = readFileSync('./agents.config.json', 'utf8');
+    const config: OrchestratorConfig = JSON.parse(configRaw);
 
   const orchestrator = new Orchestrator(config);
   const dashboard = new Dashboard(orchestrator.getEventBus(), 3000);
@@ -34,6 +35,10 @@ async function main() {
   results.forEach(r => {
     console.log(`  ${r.agentId}: ${r.status} (${r.duration}ms)`);
   });
+  } catch (err) {
+    console.error('❌ Erreur:', err instanceof Error ? err.message : String(err));
+    process.exit(1);
+  }
 }
 
 main().catch(console.error);
