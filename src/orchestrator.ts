@@ -32,17 +32,44 @@ export class Orchestrator {
 
     if (this.config.orchestration.mode === 'sequential') {
       for (const agent of matchingAgents) {
-        const result = await this.executeOnAgent(agent, task);
+        const result = await this.executeWithRetry(agent, task);
         results.push(result);
         if (result.status === 'error') break;
       }
     } else {
-      const promises = matchingAgents.map(a => this.executeOnAgent(a, task));
+      const promises = matchingAgents.map(a => this.executeWithRetry(a, task));
       results.push(...await Promise.all(promises));
     }
 
     this.results.push(...results);
     return results;
+  }
+
+  private async executeWithRetry(agent: any, task: Task): Promise<TaskResult> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= this.config.orchestration.retries + 1; attempt++) {
+      try {
+        return await this.executeOnAgent(agent, task);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        this.log(`[RETRY] ${agent.id}: tentative ${attempt}/${this.config.orchestration.retries + 1}`);
+
+        if (attempt < this.config.orchestration.retries + 1) {
+          const backoff = Math.pow(2, attempt - 1) * 100;
+          await this.sleep(backoff);
+        }
+      }
+    }
+
+    return {
+      taskId: task.id,
+      agentId: agent.id,
+      status: 'error',
+      output: { error: lastError?.message || 'Unknown error' },
+      timestamp: Date.now(),
+      duration: 0,
+    };
   }
 
   private async executeOnAgent(agent: Agent, task: Task): Promise<TaskResult> {

@@ -6,8 +6,10 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "node --test dist/**/*.test.js"
+    "start": "node dist/index.js run",
+    "server": "node dist/index.js server",
+    "test": "node dist/index.js test",
+    "dev": "node dist/index.js run"
   },
   "keywords": ["agents", "orchestration", "claude-code", "multi-agent"],
   "author": "Tarik",

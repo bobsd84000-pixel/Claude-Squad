@@ -84,6 +84,12 @@ declare global {
     name: string;
     message: string;
   }
+
+  var process: {
+    argv: string[];
+    exit(code?: number): never;
+    env: Record<string, string | undefined>;
+  };
 }
 
 declare module 'fs' {
