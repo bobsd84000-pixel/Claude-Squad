@@ -10,8 +10,17 @@ type EventListener = (event: BusEvent) => void;
 
 export class EventBus {
   private listeners: Map<string, EventListener[]> = new Map();
+  private wildcardListeners: EventListener[] = [];
 
   subscribe(eventType: string, listener: EventListener): () => void {
+    if (eventType === '*') {
+      this.wildcardListeners.push(listener);
+      return () => {
+        const idx = this.wildcardListeners.indexOf(listener);
+        if (idx >= 0) this.wildcardListeners.splice(idx, 1);
+      };
+    }
+
     if (!this.listeners.has(eventType)) {
       this.listeners.set(eventType, []);
     }
@@ -33,6 +42,14 @@ export class EventBus {
         listener(event);
       } catch (err) {
         console.error(`EventBus error for ${event.type}:`, err);
+      }
+    });
+
+    this.wildcardListeners.forEach(listener => {
+      try {
+        listener(event);
+      } catch (err) {
+        console.error(`EventBus wildcard error:`, err);
       }
     });
   }

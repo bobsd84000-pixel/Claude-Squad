@@ -134,4 +134,8 @@ export class Orchestrator {
   listAgents(): Agent[] {
     return Array.from(this.agents.values());
   }
+
+  getEventBus(): EventBus {
+    return this.eventBus;
+  }
 }

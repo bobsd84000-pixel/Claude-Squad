@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { Orchestrator } from './orchestrator.js';
+import { Dashboard } from './dashboard.js';
 import { OrchestratorConfig } from './types.js';
 
 async function main() {
@@ -7,6 +8,7 @@ async function main() {
   const config: OrchestratorConfig = JSON.parse(configRaw);
 
   const orchestrator = new Orchestrator(config);
+  const dashboard = new Dashboard(orchestrator.getEventBus(), 3000);
 
   console.log('=== Claude Squad Orchestrator ===\n');
   console.log('Agents disponibles:');
@@ -14,6 +16,8 @@ async function main() {
     console.log(`  [${a.enabled ? '✓' : '✗'}] ${a.id} (priority: ${a.priority})`);
     console.log(`      → ${a.description}`);
   });
+
+  dashboard.start();
 
   const testTask = {
     id: 'task-001',

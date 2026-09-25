@@ -26,3 +26,17 @@ declare module 'fs' {
   export function readFileSync(path: string, encoding: 'utf8'): string;
   export function existsSync(path: string): boolean;
 }
+
+declare module 'http' {
+  export function createServer(cb?: any): any;
+  export type Server = any;
+}
+
+declare module 'path' {
+  export function join(...paths: string[]): string;
+  export function dirname(path: string): string;
+}
+
+declare module 'url' {
+  export function fileURLToPath(url: any): string;
+}
