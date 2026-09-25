@@ -1,14 +1,17 @@
 import { Task, TaskResult, Agent, OrchestratorConfig } from './types.js';
 import { getRunner } from './agents/index.js';
+import { EventBus } from './eventBus.js';
 
 export class Orchestrator {
   private config: OrchestratorConfig;
   private agents: Map<string, Agent>;
   private results: TaskResult[] = [];
+  private eventBus: EventBus;
 
   constructor(config: OrchestratorConfig) {
     this.config = config;
     this.agents = new Map();
+    this.eventBus = new EventBus();
     Object.entries(config.agents).forEach(([id, agent]) => {
       this.agents.set(id, { ...agent, id });
     });
@@ -83,7 +86,12 @@ export class Orchestrator {
       const runner = getRunner(agent.id);
       let output: unknown;
       if (runner) {
-        output = await runner.run(task, this.config.orchestration.timeout);
+        const context = {
+          agentId: agent.id,
+          taskId: task.id,
+          eventBus: this.eventBus,
+        };
+        output = await runner.run(task, this.config.orchestration.timeout, context);
       } else {
         await this.sleep(100);
         output = { processed: true, agent: agent.id };

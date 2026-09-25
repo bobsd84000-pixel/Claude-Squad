@@ -1,9 +1,9 @@
 import { spawn } from 'child_process';
-import { Task } from '../types.js';
+import { Task, AgentContext } from '../types.js';
 
 export interface AgentRunner {
   id: string;
-  run(task: Task, timeoutMs: number): Promise<unknown>;
+  run(task: Task, timeoutMs: number, context?: AgentContext): Promise<unknown>;
 }
 
 export function runCommand(cmd: string, args: string[], timeoutMs: number): Promise<string> {

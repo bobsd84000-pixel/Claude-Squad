@@ -40,3 +40,9 @@ export interface OrchestratorConfig {
     logging: boolean;
   };
 }
+
+export interface AgentContext {
+  agentId: string;
+  taskId: string;
+  eventBus: any;
+}
