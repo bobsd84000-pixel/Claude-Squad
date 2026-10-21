@@ -1,0 +1,68 @@
+{
+  "agents.config.json": {
+    "mtime": 1792614218.9437804,
+    "seen": 1792614254.3504608,
+    "ast_hash": "ee5f84372e684899bb55c6de254d5a67",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1792614218.9437804,
+    "seen": 1792614254.3504696,
+    "ast_hash": "3a4f358941fbed8039c1c732e6d62c46",
+    "semantic_hash": ""
+  },
+  "src/agents/claude-code.ts": {
+    "mtime": 1792614218.9445448,
+    "seen": 1792614254.3504739,
+    "ast_hash": "efc2ff86b953d9a7b6409c6ca4ee467f",
+    "semantic_hash": ""
+  },
+  "src/agents/codex.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.350477,
+    "ast_hash": "f3c32f0bba1dc0e33eef8d9e99801a28",
+    "semantic_hash": ""
+  },
+  "src/agents/index.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504796,
+    "ast_hash": "62b6f08d72fe99efd51b861dd3549b00",
+    "semantic_hash": ""
+  },
+  "src/agents/runner.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504822,
+    "ast_hash": "1cb16f133749dfc7d22ccc75689566bc",
+    "semantic_hash": ""
+  },
+  "src/index.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504848,
+    "ast_hash": "e16d658a6aa41d2886947bc53a42e663",
+    "semantic_hash": ""
+  },
+  "src/orchestrator.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504865,
+    "ast_hash": "7cea1afb1f34a416c9da1df3e2768014",
+    "semantic_hash": ""
+  },
+  "src/types.ts": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504887,
+    "ast_hash": "deb633beef5d58e02e5346d55e0659f7",
+    "semantic_hash": ""
+  },
+  "tsconfig.json": {
+    "mtime": 1792614218.9445922,
+    "seen": 1792614254.3504903,
+    "ast_hash": "f903748a6f2a7d8fcc52f4098bada810",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1792614218.9437804,
+    "seen": 1792614254.3504925,
+    "ast_hash": "ca767dea3897c94540bf74b6c9d4126b",
+    "semantic_hash": ""
+  }
+}
